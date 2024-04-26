@@ -2,3 +2,4 @@ venv/
 .env
 models/
 db/
+further_test.ipynb
