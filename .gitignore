@@ -2,4 +2,6 @@ venv/
 .env
 models/
 db/
-further_test.ipynb
+general_tests.ipynb
+more_tests.ipynb
+support_chatbot_tests.ipynb

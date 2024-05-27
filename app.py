@@ -1,36 +1,25 @@
-#%%
 import os
 import streamlit as st
 from dotenv import load_dotenv
+from langchain_groq import ChatGroq
 from langchain import PromptTemplate
-from langchain.llms import CTransformers
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import SeleniumURLLoader
+from langchain_community.document_loaders import SeleniumURLLoader, PyPDFLoader
 from langchain.chains import RetrievalQA
 
 load_dotenv()
 
-#%%
-def load_llm():
+api_key = os.getenv('GROQ_API_KEY')
 
-    # load the llm with ctransformers
-    llm = CTransformers(model='models/Meta-Llama-3-8B-Instruct.Q2_K.gguf', # model available here: https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/tree/main
-                    model_type='llama',
-                    config={'max_new_tokens': 256, 'temperature': 0})
+def load_llm():
+    # load the llm from Groq
+    llm = ChatGroq(groq_api_key=api_key, model_name="llama3-70b-8192", temperature=0)
     return llm
 
 
-#%%
-
-urls = [
-    "https://en.wikipedia.org/wiki/Bechdel_test",
-    "https://en.wikipedia.org/wiki/Alison_Bechdel",
-]
-
 def load_vector_store(urls):
-
     loader = SeleniumURLLoader(urls=urls)
     documents = loader.load()
 
@@ -47,9 +36,7 @@ def load_vector_store(urls):
     db = Chroma.from_documents(texts_chunks, embeddings, persist_directory="db")
     return db
 
-#%%
 def load_prompt_template():
-
     # prepare the template we will use when prompting the AI
     template = """Use the provided context to answer the user's question.
     If you don't know the answer, respond with "I do not know".
@@ -66,7 +53,6 @@ def load_prompt_template():
     return prompt 
 
 def create_qa_chain():
-
     # load the llm, vector store, and the prompt
     llm = load_llm()
     db = load_vector_store(urls)
@@ -83,17 +69,12 @@ def create_qa_chain():
     return qa_chain
 
 def generate_response(query, qa_chain):
-
     # use the qa_chain to answer the given query
     return qa_chain({'query':query})['result']
 
-#%%
-
-#################################################################################################
-
 urls = [
-    "https://en.wikipedia.org/wiki/Bechdel_test",
-    "https://en.wikipedia.org/wiki/Alison_Bechdel",
+    "https://incelligent.net/case-studies/",
+    "https://incelligent.net/about-us/",
 ]
 
 st.title("Support Chatbot")
