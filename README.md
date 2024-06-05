@@ -3,17 +3,16 @@
 ## Nick Tzanis Thesis for AI MSc
 
 ### Ready:
-1. Implemented API call of an open source model (in this case Mistral-7B) through HuggingFace for the question answering.
-2. Basic quantization to reduce the memory and computation requirements (only 4 bits used for the model parameters).
-3. Set up the tokenizer and the text generation parameters (using a very low temperature at the moment to restrict the creativity in the model's answers).
-4. Set up the text generation pipeline.
-5. Set up an embedding model (GTE, also from HuggingFace) to convert the context provided into embeddings in order to create a vector store.
-6. Created a prompt template to guide the chatbot's answers and behaviour.
-7. Used the Selenium library to scrape a wikipedia page in order to create context for the chatbot's answers. From that context a vector store is created (with ChromaDB).
-8. Implemented memory for the conversation.
+1. Switched entirely the API call platform from HuggingFace to Groq to leverage faster API inference times with large LLMs (Meta's Llama 3 70b is used in the current iteration of the code).
+2. Using the above API, created a RAG system that can use context to provide answers to a user.
+3. Added the option to use either web scraping of websites (with Selenium) or pdf files in a local folder for the context.
+4. Set up an embedding model (GTE, also from HuggingFace) to convert the context provided into embeddings in order to create a vector store.
+5. Implemanted a UI with streamlit to query the chatbot.
+6. Created a temporary prompt template to guide the chatbot's answers and behaviour.
+7. Implemented memory for the conversation.
 
 ### To do:
-1. Explore different models (preferably open-sourced).
-2. Explore different prompt templates that would possibly yield better outcomes.
-3. Explore alternative methods to provide context (eg. through PDF files).
-4. Create a UI so that users can query the chatbot (will probably be done with streamlit).
+1. Try out and evaluate other models (probably from Groq too). At this time the models offered are Meta's Llama3 8b, Llama3 70b, Mixtral 8x7b and Gemma 7b.
+2. Create a dataset for the evaluation of the models.
+3. Adjust prompt templates that would possibly yield better outcomes for each model.
+4. Possible adjustment of the streamlit UI to allow the user a selection of context and/or model to be used by the chatbot instead of being hard coded into the script.

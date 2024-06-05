@@ -3,5 +3,5 @@ venv/
 models/
 db/
 general_tests.ipynb
-more_tests.ipynb
+endless_tests.ipynb
 support_chatbot_tests.ipynb
