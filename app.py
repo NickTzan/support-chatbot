@@ -13,9 +13,13 @@ load_dotenv()
 
 api_key = os.getenv('GROQ_API_KEY')
 
-def load_llm():
+def load_llm(model):
+    
     # load the llm from Groq
-    llm = ChatGroq(groq_api_key=api_key, model_name="llama3-70b-8192", temperature=0)
+    if model=="Llama3 70B":
+        llm = ChatGroq(groq_api_key=api_key, model_name="llama3-70b-8192", temperature=0.1)
+    elif model=="Llama3 8B":
+        llm = ChatGroq(groq_api_key=api_key, model_name="llama3-8b-8192", temperature=0.1)
     return llm
 
 
@@ -54,7 +58,7 @@ def load_prompt_template():
 
 def create_qa_chain():
     # load the llm, vector store, and the prompt
-    llm = load_llm()
+    llm = load_llm(model)
     db = load_vector_store(urls)
     prompt = load_prompt_template()
 
@@ -79,29 +83,36 @@ urls = [
 
 st.title("Support Chatbot")
 
-qa_chain = create_qa_chain()
+model = st.sidebar.selectbox(
+    "Which LLM do you want to use for this chatbot?",
+    ("Llama3 8B", "Llama3 70B"),
+    index=None,
+    placeholder="Select a model..."
+    )
 
-# Initialize chat history
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+if model:
+    qa_chain = create_qa_chain()
 
-# Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    # Initialize chat history
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-# React to user input
-if prompt := st.chat_input("What is up?"):
-    # Display user message in chat message container
-    st.chat_message("user").markdown(prompt)
-    # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    # Display chat messages from history on app rerun
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-    response = generate_response(prompt, qa_chain)
+    # React to user input
+    if prompt := st.chat_input("What is up?"):
+        # Display user message in chat message container
+        st.chat_message("user").markdown(prompt)
+        # Add user message to chat history
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Display assistant response in chat message container
-    with st.chat_message("assistant"):
-        st.markdown(response)
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
-# %%
+        response = generate_response(prompt, qa_chain)
+
+        # Display assistant response in chat message container
+        with st.chat_message("assistant"):
+            st.markdown(response)
+        # Add assistant response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
