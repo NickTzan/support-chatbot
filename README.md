@@ -10,9 +10,9 @@
 5. Implemanted a UI with streamlit to query the chatbot.
 6. Created a temporary prompt template to guide the chatbot's answers and behaviour.
 7. Implemented memory for the conversation.
+8. The Streamlit UI now allows the user to select the model used in the conversation.
 
 ### To do:
 1. Try out and evaluate other models (probably from Groq too). At this time the models offered are Meta's Llama3 8b, Llama3 70b, Mixtral 8x7b and Gemma 7b.
 2. Create a dataset for the evaluation of the models.
 3. Adjust prompt templates that would possibly yield better outcomes for each model.
-4. Possible adjustment of the streamlit UI to allow the user a selection of context and/or model to be used by the chatbot instead of being hard coded into the script.
