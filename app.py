@@ -5,6 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_chroma import Chroma
+from langchain_core.runnables.base import Runnable
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import PyPDFLoader, WebBaseLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -12,7 +13,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory, StreamlitChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 load_dotenv()
@@ -113,22 +114,39 @@ def create_qa_chain(llm, history_aware_retriever):
     return qa_chain
 
 # Initialize an empty dictionary that will store the session data
-store = {}
+if 'store' not in st.session_state:
+    st.session_state.store = {}
 
 # Load the LLM
-llm = load_llm()
+if 'llm' not in st.session_state:
+    st.session_state.llm = load_llm()
+
 # Create a retriever from the vector store
-retriever = prepare_retriever()
+if 'retriever' not in st.session_state:
+    st.session_state.retriever = prepare_retriever()
+
 # Create a history-aware retriever
-history_aware_retriever = generate_history_aware_retriever(llm, retriever)
+if 'history_aware_retriever' not in st.session_state:
+    st.session_state.history_aware_retriever = generate_history_aware_retriever(st.session_state.llm, st.session_state.retriever)
+
 # With the chosen LLM and the history aware retriever create the QA chain
-rag_chain = create_qa_chain(llm, history_aware_retriever)
+if 'rag_chain' not in st.session_state:
+    st.session_state.rag_chain = create_qa_chain(st.session_state.llm, st.session_state.history_aware_retriever)
 
 # Get the chat history from the current session
-def get_session_history(session_id: str) -> BaseChatMessageHistory:
-    if session_id not in store:
-        store[session_id] = ChatMessageHistory()
-    return store[session_id]
+def get_session_history(session_id: str):
+    if session_id not in st.session_state.store:
+        st.session_state.store[session_id] = StreamlitChatMessageHistory()
+    return st.session_state.store[session_id]
+
+# Create the QA chain for the user interaction
+conversational_rag_chain = RunnableWithMessageHistory(
+    st.session_state.rag_chain,
+    get_session_history,
+    input_messages_key="input",
+    history_messages_key="chat_history",
+    output_messages_key="answer",
+)
 
 ############################################################################
 # Streamlit Implementation
@@ -141,15 +159,7 @@ st.text(f"Currently answering questions about: \n{url}")
 # Initialize chat history in the session state if not already present
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
-# Create the QA chain for the user interaction
-conversational_rag_chain = RunnableWithMessageHistory(
-    rag_chain,
-    get_session_history,
-    input_messages_key="input",
-    history_messages_key="chat_history",
-    output_messages_key="answer",
-)
+    st.session_state.messages.append({"role": "assistant", "content": 'How can I help?'})
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
