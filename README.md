@@ -9,6 +9,7 @@
 4. Set up an embedding model (all-mpnet-base-v2, also from HuggingFace) to convert the context provided into embeddings in order to create a vector store.
 5. Implemanted a UI with streamlit to query the chatbot.
 6. Implemented memory for the conversation.
+7. Started the evaluation locally with Ollama. Will probably test at least 3-4 models at various metrics. The Ragas library will be used for the evaluation.
 ### To do:
 1. Try out and evaluate other models (probably from Groq too). At this time the models offered are Meta's Llama3 8b, Llama3 70b, Mixtral 8x7b and Gemma 7b.
 2. Create a dataset for the evaluation of the models.
