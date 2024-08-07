@@ -7,3 +7,4 @@ data/
 test.py
 tests.ipynb
 ollama.ipynb
+evaluation.ipynb
