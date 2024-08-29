@@ -1,18 +1,27 @@
-# Support Chatbot for Customer Question Answering
-------------
-## Nick Tzanis Thesis for AI MSc
+# Customer Support Chatbot - MSc AI Thesis by Nick Tzanis
 
-### Chatbot:
-1. Switched entirely the API call platform from HuggingFace to Groq to leverage faster API inference times with large LLMs (Meta's Llama 3 70b is used in the current iteration of the code).
-2. Using the above API, created a RAG system that can use context to provide answers to a user.
-3. Added the option to use either web scraping of websites (with Selenium) or pdf files in a local folder for the context.
-4. Set up an embedding model (all-mpnet-base-v2, also from HuggingFace) to convert the context provided into embeddings in order to create a vector store.
-5. Implemanted a UI with streamlit to query the chatbot.
-6. Implemented memory for the conversation.
+This repository contains the implementation of a customer support chatbot developed as part of my MSc thesis in Artificial Intelligence. The chatbot is designed to deliver accurate, context-aware responses by integrating large language models (LLMs) and various AI tools. Below is an overview of the project’s features and the methodologies employed.
 
-### Model Evaluation:
-1. Created a dataset for the evaluation of the models.
-2. The notebook "create_eval_sets.ipynb" saves each model's answers for the questions in the evaluation set.
-3. Then in the "evaluate.ipynb" notebook using the ragas library metrics we evaluate each model's answers.
-4. Five different models were evaluated (llama 8b, llama 70b, mixtral 8x7b, gemma 7b and gemma2 9b).
-5. The metrics for each model are presented with visualisations using the matplotlib library.
+## Project Overview
+
+### Chatbot Development
+
+- **Retrieval-Augmented Generation (RAG):** A RAG system was implemented to enhance the chatbot’s ability to use context for generating accurate answers. This system allows the chatbot to retrieve relevant information before generating a response, improving overall accuracy.
+
+- **API Platform Transition:** The API platform was switched from HuggingFace to Groq, optimizing for faster inference times with large LLMs. The current iteration utilizes Meta's Llama 3 70b for efficient and reliable response generation.
+  
+- **Context Sourcing:** The chatbot can source context from multiple inputs:
+  - **Web Scraping:** Using BeautifulSoup, the chatbot can scrape information from specified websites.
+  - **Local PDFs:** Alternatively, it can pull context from PDF files stored in a local directory.
+
+- **Embedding Model:** The project integrates the all-mpnet-base-v2 embedding model (from HuggingFace) to convert contextual data into embeddings, which are then used to create a vector store for efficient information retrieval.
+
+- **User Interface:** A Streamlit-based UI was developed to allow users to interact with the chatbot. The interface also supports conversational memory, enabling more natural and continuous interactions.
+
+### Model Evaluation
+
+- **Evaluation Dataset:** A custom dataset was created specifically for evaluating the chatbot's performance across different LLMs.
+
+- **Automated Evaluation Workflow:** The `create_eval_sets.ipynb` notebook saves each model's answers to evaluation questions, streamlining the comparison process.
+
+- **Performance Analysis:** The `evaluate.ipynb` notebook leverages the RAGAS library to assess and compare the performance of five different models: Llama 8b, Llama 70b, Mixtral 8x7b, Gemma 7b, and Gemma2 9b. Evaluation results are presented using visualizations generated with Matplotlib.
